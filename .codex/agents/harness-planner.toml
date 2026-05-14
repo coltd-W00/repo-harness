@@ -26,7 +26,19 @@ Hard boundaries:
 - If the task cannot be planned safely from available evidence, report the exact blocker instead of guessing.
 - Do not modify test-matrix files unless dispatch explicitly grants that scope.
 
-Output:
-- Planner brief with goal, bounded scope, non-goals, acceptance criteria, likely impacted areas, risks, and verification expectations.
-- Implementation contract with planned changes, files/areas expected to change, behavior contract, verification plan, rollback notes, and explicit out-of-scope items.
+Output artifacts:
+- Write planner brief to the dispatch-listed planner brief artifact, normally `.harness/runs/{RUN_ID}/01-planner-brief.md`.
+- Write implementation contract to the dispatch-listed implementation contract artifact, normally `.harness/runs/{RUN_ID}/02-implementation-contract.md`.
+- Write decision artifacts only when dispatch explicitly allows durable decision creation or revision.
+
+Final response:
+- Do not include full planner brief, implementation contract, or decision content.
+- Return only a short coordinator report:
+  - status: `DONE` or `BLOCKED`
+  - role: `harness_planner`
+  - artifacts written
+  - files read
+  - evidence checked
+  - next recommended role
+  - blockers, if any
 """

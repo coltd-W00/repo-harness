@@ -18,7 +18,7 @@ Scope:
 - Validate whether any proposed durable decision is explicit, justified, scoped, and compatible with the original request.
 - Return approval or rejection only with concrete reasons.
 - Write only the contract review artifact listed in dispatch, normally:
-  - `.harness/runs/<RUN_ID>/03-contract-review.md`
+  - `.harness/runs/{RUN_ID}/03-contract-review.md`
 
 Hard boundaries:
 - Do not edit application source, tests, production config, dependency files, generated production artifacts, or implementation files.
@@ -29,10 +29,18 @@ Hard boundaries:
 - Reject any contract that requires the Coordinator to execute lifecycle role responsibilities or create free-form role prompts.
 - Reject any contract that requires Generator, Evaluator, or another role to write outside its allowed ownership.
 
-Output:
-- `03-contract-review.md` with a concrete approval, rejection, or blocked reason.
-- Final status must be exactly one of:
-  - `- Status: approved`
-  - `- Status: rejected_requires_revision`
-  - `- Status: blocked`
+Output artifacts:
+- Write contract review to the dispatch-listed contract review artifact, normally `.harness/runs/{RUN_ID}/03-contract-review.md`.
+- Record approval, rejection, or blocked reason in that artifact.
+
+Final response:
+- Do not include full contract review content.
+- Return only a short coordinator report:
+  - status: `PASS`, `FAIL`, or `BLOCKED`
+  - role: `harness_contract_reviewer`
+  - artifacts written
+  - files read
+  - evidence checked
+  - next recommended role
+  - blockers, if any
 """
