@@ -23,6 +23,7 @@ Planner -> Contract Reviewer -> Generator -> Evaluator
 
 .harness/
   project/state.yaml
+  project/state.template.yaml
   runs/template/run.yaml
   runs/template/dispatch/role.dispatch.template.md
   decisions/template/decisions.template.md
@@ -47,6 +48,8 @@ cp .harness/runs/template/dispatch/role.dispatch.template.md .harness/runs/<RUN_
 ```
 
 Then replace `<RUN_ID>`, `<ROLE>`, `<PHASE>`, and the dispatch-specific read/write paths. Update `.harness/project/state.yaml` so it points at the active run.
+
+Use `AGENTS.md` as the canonical artifact layout reference for a run. Files under `.harness/**/template/` are examples only, not active run artifacts.
 
 ## Status contract
 

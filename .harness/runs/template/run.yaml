@@ -2,7 +2,7 @@ run_id: <RUN_ID>
 status: initialized
 current_phase: planning
 next_role: harness_planner
-request_snapshot: .harness/runs/<RUN_ID>/00-request.md
+request_snapshot: .harness/runs/<RUN_ID>/00-request-snapshot.md
 request_brief: .harness/runs/<RUN_ID>/00-request-brief.md
 
 artifacts:

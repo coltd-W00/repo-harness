@@ -21,6 +21,7 @@ Vị trí chuẩn:
 ```txt
 .codex/agents/*.toml
 .harness/project/state.yaml
+.harness/project/state.template.yaml
 .harness/runs/{RUN_ID}/run.yaml
 .harness/runs/{RUN_ID}/dispatch/*.dispatch.md
 ```
@@ -42,6 +43,37 @@ Project state chỉ nên chứa active run pointer, current status, current phas
 Coordinator sở hữu quyền cập nhật project state.
 
 Subagent có thể đọc project state để validation, nhưng không được cập nhật project state trừ khi dispatch cho phép rõ ràng trong write scope.
+
+## Run Layout
+
+Run directory chuẩn:
+
+```txt
+.harness/runs/{RUN_ID}/
+  run.yaml
+  00-request-snapshot.md
+  00-request-brief.md
+  01-planner-brief.md
+  02-implementation-contract.md
+  03-contract-review.md
+  04-implementation-report.md
+  05-evaluator-report.md
+  dispatch/
+    harness-planner.dispatch.md
+    harness-contract-reviewer.dispatch.md
+    harness-generator.dispatch.md
+    harness-evaluator.dispatch.md
+```
+
+Template tham khảo nằm tại:
+
+```txt
+.harness/project/state.template.yaml
+.harness/runs/template/run.yaml
+.harness/runs/template/dispatch/role.dispatch.template.md
+```
+
+Files under `.harness/**/template/` are examples only and must not be treated as active project artifacts.
 
 ## Quy tắc Coordinator
 
@@ -142,6 +174,8 @@ Dispatch phải liệt kê project state và run state trong allowed read paths 
 
 Với long request, dispatch chỉ trỏ tới request brief và request snapshot; không duplicate full request content.
 
+Nếu một edit target không nằm trong `allowed_write_paths`, không sửa file đó dù workspace sandbox cho phép.
+
 Subagent phải xem dispatch file là source of truth cho task hiện tại.
 
 Nếu dispatch mâu thuẫn với project state hoặc run state, subagent phải dừng và báo `BLOCKED`.
@@ -198,6 +232,15 @@ Khi kết thúc một role task, chỉ report:
 Tránh summary dài, lặp lại context, và giải thích suy đoán.
 
 Coordinator nên dùng final report của subagent để advance state. Coordinator không đọc full role artifacts trừ khi final report bị thiếu, không hợp lệ, blocked, failed, hoặc mâu thuẫn với lifecycle/state/dispatch.
+
+## Role Result Contract
+
+| role | status | decision |
+|---|---|---|
+| harness_planner | DONE, BLOCKED | planned, blocked |
+| harness_contract_reviewer | PASS, FAIL, BLOCKED | approved, rejected_requires_revision, blocked |
+| harness_generator | DONE, BLOCKED | implemented, blocked |
+| harness_evaluator | PASS, FAIL, BLOCKED | pass, fail, blocked_insufficient_evidence |
 
 ## Conflict Rule
 
