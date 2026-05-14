@@ -149,13 +149,21 @@ Nếu dispatch mâu thuẫn với project state hoặc run state, subagent phả
 
 Chỉ Generator được sửa application code.
 
-Chỉ Coordinator được sửa project state và run state, trừ khi dispatch cho phép role khác rõ ràng.
+Chỉ Coordinator được sửa project state, run state, và dispatch files.
 
-Chỉ Planner được sửa contract artifacts.
+Chỉ Planner được sửa planner brief, implementation contract, và decision artifacts khi dispatch cho phép durable decision creation hoặc revision.
 
-Chỉ Contract Reviewer được sửa review artifacts.
+Chỉ Contract Reviewer được sửa review artifacts. Contract Reviewer có thể approve, reject, hoặc yêu cầu sửa decision artifacts thông qua review artifacts.
 
-Chỉ Evaluator được sửa evaluation artifacts.
+Chỉ Generator được sửa application code changes trong allowed write scope.
+
+Chỉ Evaluator được sửa evaluation artifacts và test-matrix artifacts.
+
+Planner có thể định nghĩa acceptance criteria và verification expectations trong implementation contract, nhưng không sửa test-matrix files trừ khi dispatch cho phép rõ ràng.
+
+Generator không được sửa decisions hoặc test-matrix artifacts.
+
+Evaluator không được sửa decisions, trừ khi dispatch cho phép rõ ràng để ghi evidence-backed invalidation proposal.
 
 Không ghi ngoài allowed write scope.
 
