@@ -2,6 +2,19 @@
 
 Repository này đã cài **Harness** để điều phối AI-assisted development bằng artifacts lifecycle state.
 
+## Quy tắc bắt buộc dùng Harness
+
+Repository này dùng Harness cho mọi công việc triển khai.
+
+Với mọi yêu cầu của user có thể dẫn tới sửa code, sửa test, thay đổi behavior, refactor, sửa generated artifact, hoặc sửa project artifact, agent bắt buộc phải dùng Harness workflow.
+
+Workflow bắt buộc là:
+
+```txt
+Planner -> Contract Reviewer -> Generator -> Evaluator
+```
+Main agent là Coordinator.
+
 ## Language Rule
 
 Reply theo ngôn ngữ người dùng; giữ code, command, path, API name, logs, schema keys, package names, và identifiers ở dạng gốc.
