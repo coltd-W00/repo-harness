@@ -44,6 +44,8 @@
   - `IF` liên quan đến maturity, benchmark, observability, trace quality: Đọc
     `docs/HARNESS_COMPONENTS.md` và `docs/HARNESS_MATURITY.md`.
 - **Tạo Story:**
+  - Đọc `docs/stories/README.md`
+  - Đọc `docs/product/README.md`
   - `IF [Lane == tiny]`: Bỏ qua Story.
   - `IF [Lane == normal]`: Tạo 1 file từ `docs/templates/story.md`. Link product
     docs, cập nhật validation.
