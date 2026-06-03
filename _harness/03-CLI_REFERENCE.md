@@ -1,6 +1,6 @@
 # Tra cứu lệnh Harness CLI
 
-Sử dụng `scripts/bin/harness-cli` (macOS/Linux) hoặc
+Giao tiếp với `harness.db` qua `scripts/bin/harness-cli` (macOS/Linux) hoặc
 `scripts/bin/harness-cli.exe` (Windows).
 
 ## 1. Setup & Truy vấn chung
@@ -14,46 +14,45 @@ Sử dụng `scripts/bin/harness-cli` (macOS/Linux) hoặc
 
 ## 2. Intake
 
-- `scripts/bin/harness-cli intake --type <type> --summary <text> --lane <lane>`
+- `scripts/bin/harness-cli intake --type "<type>" --summary "<text>" --lane <tiny|normal|high-risk>`
 
 ## 3. Story & Verify
 
 - Thêm mới:
-  `scripts/bin/harness-cli story add --id <id> --title <text> --lane <lane>`
-- Cập nhật Proof (chỉ nhận số 1 hoặc 0):
+  `scripts/bin/harness-cli story add --id <id> --title "<text>" --lane <lane>`
+- Cập nhật Proof (dùng số 1/0):
   `scripts/bin/harness-cli story update --id <id> --unit 1 --integration 1 --e2e 0 --platform 0 --status <status>`
 - Gắn lệnh Verify:
   `scripts/bin/harness-cli story update --id <id> --verify "<command>"`
-- Chạy Verify: `scripts/bin/harness-cli story verify <id>` (Trả về exit 0 nếu
-  pass, 1 nếu fail)
+- Chạy Verify: `scripts/bin/harness-cli story verify <id>`
 
 ## 4. Decision
 
-- `scripts/bin/harness-cli decision add --id <id> --title <text> --doc docs/decisions/<file>.md`
+- `scripts/bin/harness-cli decision add --id <id> --title "<text>" --doc docs/decisions/<file>.md --notes "<notes>"`
 
 ## 5. Trace
 
 - Chấm điểm trace: `scripts/bin/harness-cli score-trace --id <id>`
-- Ghi trace (Đảm bảo định dạng mảng là JSON array text):
-
-````bash
-    scripts/bin/harness-cli trace \
-      --summary "<text>" \
-      --outcome <completed|blocked|partial|failed> \
-      --intake <id> \
-      --story <id> \
-      --agent <name> \
-      --actions '["action1","action2"]' \
-      --read '["file1","file2"]' \
-      --changed '["file1"]' \
-      --decisions '["decision1"]' \
-      --errors '["none"]' \
-      --friction '["concrete pain"]' \
-      --duration <seconds> \
-      --tokens <estimate> \
-      --notes "<text>"
-    ```
+- Ghi trace (Mảng bắt buộc là JSON array text):
+  ```bash
+  scripts/bin/harness-cli trace \
+    --summary "<text>" \
+    --outcome <completed|blocked|partial|failed> \
+    --intake <id> \
+    --story <id> \
+    --agent <name> \
+    --actions '["action1","action2"]' \
+    --read '["file1","file2"]' \
+    --changed '["file1"]' \
+    --decisions '["decision1"]' \
+    --errors '["none"]' \
+    --friction '["Problem description. Attribution: Task specification."]' \
+    --duration <seconds> \
+    --tokens <estimate> \
+    --notes "<text>"
+  ```
 
 ## 6. Backlog
-*   Thêm: `scripts/bin/harness-cli backlog add --title "<short name>" --pain "<what was hard>" --risk <tiny|normal|high-risk> --predicted "<measurable impact>"`
-````
+
+- Thêm mới:
+  `scripts/bin/harness-cli backlog add --title "<short name>" --pain "<what was hard>" --risk <tiny|normal|high-risk> --predicted "<measurable impact>"`

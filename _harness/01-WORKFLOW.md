@@ -13,9 +13,8 @@
 
 ## GIAI ĐOẠN 1: INTAKE (Phân loại)
 
-- **1. Chọn Type:** `New spec` (Spec mới), `Spec slice` (Cắt spec),
-  `Change request` (Thay đổi), `New initiative` (Sáng kiến lớn),
-  `Maintenance request` (Bảo trì), `Harness improvement` (Cải tiến Harness).
+- **1. Chọn Type:** `New spec`, `Spec slice`, `Change request`,
+  `New initiative`, `Maintenance request`, `Harness improvement`.
 - **2. Đếm Rủi ro (Risk Flags):** (1) Auth, (2) Authorization, (3) Data model,
   (4) Audit/security, (5) External systems, (6) Public contracts, (7)
   Cross-platform, (8) Existing behavior, (9) Weak proof, (10) Multi-domain.
@@ -33,16 +32,14 @@
 
 ## GIAI ĐOẠN 2: PLANNING (Lập kế hoạch)
 
-- **Retrieval Triggers (Kích hoạt lấy thêm Context):**
-  - `IF` chạm DB schema/migration: Đọc `docs/decisions/0004...` và
-    `scripts/schema/`(bao gồm `scripts/schema/001-init.sql`) và
+- **Retrieval Triggers (Kích hoạt lấy Context):**
+  - `IF` chạm database schema, durable records, bảng trace, migrations: Đọc
+    `scripts/schema/` (gồm `001-init.sql`) và
     `docs/decisions/0004-sqlite-durable-layer.md`.
   - `IF` chạm CLI/installer: Đọc `docs/decisions/0005...` và
     `crates/harness-cli/*`.
-  - `IF` tác vụ liên quan đến cấp độ trưởng thành (maturity), đo lường hiệu năng
-    (benchmark), khả năng quan sát (observability), hoặc chất lượng dấu vết
-    (trace quality): BẮT BUỘC đọc `docs/HARNESS_COMPONENTS.md` và
-    `docs/HARNESS_MATURITY.md`.
+  - `IF` liên quan đến maturity, benchmark, observability, trace quality: Đọc
+    `docs/HARNESS_COMPONENTS.md` và `docs/HARNESS_MATURITY.md`.
 - **Tạo Story:**
   - `IF [Lane == tiny]`: Bỏ qua Story.
   - `IF [Lane == normal]`: Tạo 1 file từ `docs/templates/story.md`. Link product
@@ -63,61 +60,55 @@
 
 ## GIAI ĐOẠN 4: VALIDATION (Xác thực)
 
-- **Validation Ladder (Thang đo):** `validate:quick` (lint/unit),
-  `test:integration` (backend/DB), `test:e2e` (browser), `test:platform`
-  (shell/mobile/desktop), `test:release`. KHÔNG báo cáo PASS nếu lệnh chưa tồn
-  tại.
-- **Status Của Story:** `planned` (kế hoạch), `in_progress` (đang code),
-  `implemented` (đã code VÀ có proof), `changed` (hợp đồng đã đổi), `retired`
-  (loại bỏ).
+- **Validation Ladder:** `validate:quick`, `test:integration`, `test:e2e`,
+  `test:platform`, `test:release`. KHÔNG báo cáo PASS nếu lệnh chưa tồn tại.
+- **Story Status:** `planned`, `in_progress`, `implemented` (đã code VÀ có
+  proof), `changed`, `retired`.
 - **Hành động CLI:**
-  1. `harness-cli story update --id <ID> --unit 1 ...` (Dùng giá trị 1/0).
-  2. `harness-cli story update --id <ID> --verify "<command>"`.
-  3. `harness-cli story verify <ID>`. Lệnh này sẽ thoát với mã 0 (pass) hoặc 1
-     (fail). Nếu fail, Agent vẫn được phép chuyển sang Giai đoạn 5 để ghi nhận
-     tác vụ dở dang (hệ thống sẽ tự in ra một cảnh báo).
+  1. Cập nhật matrix: `harness-cli story update --id <ID> --unit 1 ...` (Dùng
+     1/0).
+  2. Gắn verify command:
+     `harness-cli story update --id <ID> --verify "<command>"`.
+  3. Chạy xác thực: `harness-cli story verify <ID>`. _(Lệnh thoát mã 0=pass,
+     1=fail. Nếu fail, Agent VẪN ĐƯỢC sang Giai đoạn 5 để ghi nhận tác vụ dở dang)._
 
 ---
 
 ## GIAI ĐOẠN 5: TRACE (Ghi dấu vết)
 
-- **Trạng thái kết quả (Outcome):** Bắt buộc đánh giá thực tế và chọn một trong
-  các giá trị: `completed`, `blocked`, `partial`, hoặc `failed`.
-- **Bắt buộc theo Tier(Lưu ý: Các trường danh sách phải dùng định dạng JSON
-  array text):**
-  - `Minimal` (Cho Tiny): Cần `task_summary` (>10 ký tự), `outcome` (completed,
-    blocked, partial, failed).
-  - `Standard` (Cho Normal): Cần Minimum + `intake_id`, `story_id`, `agent`,
-    `actions_taken` (JSON), `files_read` (JSON), `files_changed` (JSON),
-    `errors` hoặc `friction`.
-  - `Detailed` (Cho High-Risk): Cần Standard + `decisions_made` (JSON), `errors`
-    (JSON, ghi 'none' nếu không có), `duration_seconds`, `token_estimate`.
-- **Friction Protocol:** Friction phải NÊU ĐÍCH DANH VẤN ĐỀ, không nêu cảm xúc
-  (Ví dụ Tốt: "Docs thiếu copy cho installer", Ví dụ Tồi: "Docs khó hiểu"). `IF`
-  tác vụ thất bại (failed/blocked) và cần quy gán lỗi (failure attribution) cho
-  một thành phần hệ thống cụ thể: BẮT BUỘC đọc và tham chiếu
-  `docs/HARNESS_COMPONENTS.md` trong trường báo cáo.
+- **Outcome:** Chọn một trong: `completed`, `blocked`, `partial`, hoặc `failed`.
+- **Tier Rules (Dữ liệu mảng bắt buộc dùng JSON array text):**
+  - `Minimal` (Tiny): Cần `task_summary` (>10 ký tự), `outcome`.
+  - `Standard` (Normal): Minimal + `intake_id`, `story_id`, `agent`,
+    `actions_taken`, `files_read`, `files_changed`, `errors` hoặc `friction`.
+  - `Detailed` (High-Risk): Standard + `decisions_made`, `errors` (ghi 'none'
+    nếu không có), `duration_seconds`, `token_estimate`.
+- **Friction & Failure Attribution:** Friction phải NÊU ĐÍCH DANH VẤN ĐỀ.
+  `IF [Outcome == failed OR partial]`, Agent BẮT BUỘC quy gán lỗi vào ít nhất 1
+  trong 11 danh mục (Responsibilities): _Task specification, Context selection,
+  Tool access, Project memory, Task state, Observability, Failure attribution,
+  Verification, Permissions, Entropy auditing, Intervention recording_.
 
 ---
 
 ## GIAI ĐOẠN 6: GROWTH (Tiến hóa)
 
-- `IF` [Có Friction hoặc thiếu capability]: Đưa vào Backlog qua CLI.
-- **Quy tắc Backlog Outcome Loop:** Khi tạo, BẮT BUỘC dùng
-  `--predicted "<dự đoán kết quả>"`. Khi đóng, dùng
-  `--outcome "<kết quả thực tế>"` để AI sau này so sánh. Rủi ro của backlog chỉ
-  được chọn `tiny`, `normal`, hoặc `high-risk` (Không có 'low').
+- `IF` [Có Friction hoặc thiếu capability]: Thêm vào Backlog qua CLI.
+- **Backlog Protocol:** BẮT BUỘC dùng `--predicted "<kết quả dự đoán>"`. Khi
+  đóng ticket dùng `--outcome "<thực tế>"`. (Risk chỉ được chọn `tiny`,
+  `normal`, `high-risk`).
 
 ---
 
 ## GIAI ĐOẠN 7: DONE (Hoàn thành)
 
-Một tác vụ chỉ được coi là xong (Done Definition) khi:
+Một tác vụ chỉ được coi là xong khi: Đổi code xong (hoặc block đã log),
+Docs/Matrix cập nhật, Validation đã chạy, Trace đã lưu.
 
-1. Đổi code xong HOẶC blocker được ghi chú lại.
-2. Docs, Stories, Test Matrix được cập nhật thực tế.
-3. Validation commands đã chạy.
-4. Trace đã lưu.
-5. Missing harness capabilities đã lưu vào Backlog.
-6. Câu trả lời cuối cùng cho User phải nêu rõ cái gì ĐÃ THAY ĐỔI và cái gì KHÔNG
-   ĐƯỢC THỬ.
+- **Rào cản Maturity (Anti-Hallucination):**
+  - KHÔNG claim H3 nếu chưa có đối chiếu benchmark và quy gán lỗi theo
+    Component.
+  - KHÔNG claim H4 nếu chưa có hệ thống batch verification.
+  - KHÔNG claim H5 nếu hệ thống tiến hóa tự động chưa chạy.
+- **Hành động:** Trả lời User, tóm tắt rõ ID, thay đổi, và những gì không được
+  thử.

@@ -27,3 +27,6 @@ Mỗi tác vụ tạo ra một trong hai (hoặc cả hai) kết quả:
   docs.
 - **Harness Delta:** Thay đổi về docs, templates, validation, backlog items,
   hoặc decision records để giúp tác vụ sau dễ dàng hơn.
+
+**[HÀNH ĐỘNG TIẾP THEO]:** Agent BẮT BUỘC chuyển sang đọc `_harness/01-WORKFLOW.md`
+để bắt đầu quy trình.
