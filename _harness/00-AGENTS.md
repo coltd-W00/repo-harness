@@ -28,3 +28,17 @@ Mỗi tác vụ tạo ra một trong hai (hoặc cả hai) kết quả:
 
 **[HÀNH ĐỘNG TIẾP THEO]:** Agent BẮT BUỘC chuyển sang đọc
 `_harness/01-WORKFLOW.md` để bắt đầu quy trình.
+
+## 3. Định dạng Giao tiếp (UI Output)
+
+Trong MỌI phản hồi gửi cho người dùng, bạn BẮT BUỘC phải mở đầu bằng khối hiển
+thị tiến độ hành động hiện tại (Execution Tracker) của bạn theo định dạng sau:
+
+```text
+Action Plan
+  └ ✔ [Tên bước đã hoàn thành 1]
+    ✔ [Tên bước đã hoàn thành 2]
+    ...
+    □ [Tên bước đang/sắp thực hiện 10]
+    □ [Tên bước sắp thực hiện 11]
+```
