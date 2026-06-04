@@ -3,9 +3,6 @@
 Dự án sử dụng **Harness** — hệ điều hành cấp repository giúp Agent biến yêu cầu
 thành thay đổi an toàn.
 
-**Quy tắc định dạng:** Mọi file markdown bắt buộc sử dụng 80-character hard
-wrapping cho các đoạn văn bản chuẩn.
-
 ## 1. Triết lý cốt lõi
 
 - **Harness v0 Scope:** Hệ thống hiện tại cố tình KHÔNG BAO GỒM stack ứng dụng,
