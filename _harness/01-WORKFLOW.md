@@ -94,11 +94,11 @@
   tuyệt đối "Dependency Rule" và "Parse-First Boundary" (Tra cứu tại
   `02-STANDARDS.md`). Bám sát chính xác những gì đã thiết kế trong `execplan.md`
   hoặc `design.md`.
-- **Vừa code vừa giữ chuẩn (shift-left):** trong lúc viết, code theo ba ràng
-  buộc — _Quality_ (Dependency Rule, Parse-First, đúng `design.md`), _Security_
-  (validate input từ biên, KHÔNG lộ secret/credential, để ý Hard Gate), và
-  _Maintainability_ (naming/coupling gọn, test theo Test Matrix). Đây là phòng
-  ngừa rẻ; phần kiểm chứng độc lập dành cho Cửa ải Review bên dưới.
+- **Vừa code vừa giữ chuẩn (shift-left):** code theo ba ràng buộc — _Quality_
+  (Dependency Rule, Parse-First, đúng `design.md`), _Security_ (validate input
+  biên, KHÔNG lộ secret/credential, để ý Hard Gate), _Maintainability_
+  (naming/coupling gọn, test theo Test Matrix). Kiểm chứng độc lập để cho Cửa ải
+  Review.
 - **[STOP] Cửa ải Review (GĐ3→GĐ4):** Trước khi sang Giai đoạn 4, Agent BẮT BUỘC
   nạp và chạy skill `skills/review-3-lens.md` — một vòng review độc lập 3 lens
   (Quality&Architecture / Security&Risk / Maintainability&Proof). KHÔNG sang GĐ4
