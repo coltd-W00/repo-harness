@@ -20,8 +20,8 @@ Chạy 1 vòng review độc lập 3 lens rồi GATE. Self-check nội tuyến G
 ## STEPS
 
 Mỗi lens: KHÔNG sửa code, chỉ xuất finding
-`{severity: blocking|minor, responsibility}`. Chạy 3 lens ĐỘC LẬP (được phép 3
-sub-agent song song); nếu tuần tự, KHÔNG để lens trước dẫn dắt lens sau.
+`{severity: blocking|minor, responsibility}`. Chạy 3 lens ĐỘC LẬP, spawn 3
+sub-agent song song; nếu tuần tự, KHÔNG để lens trước dẫn dắt lens sau.
 
 1. **Lens 1 — Quality & Architecture:** `interface` gọi thẳng `database`? Input
    biên đã parse thành typed DTO/Command trước khi vào application/domain? Inner
