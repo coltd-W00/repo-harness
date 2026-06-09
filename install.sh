@@ -10,7 +10,6 @@ ARCHIVE_URL="https://codeload.github.com/${REPO_OWNER}/${REPO_NAME}/tar.gz/${REF
 
 INSTALL_ITEMS=(
   ".editorconfig"
-  ".gitignore"
   ".prettierignore"
   ".prettierrc"
   "AGENTS.md"
