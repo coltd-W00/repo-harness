@@ -1,76 +1,125 @@
 ---
 name: deepwiki
 description: >-
-  Generate or refresh a DeepWiki-style Markdown wiki for the repo under
-  docs/wiki/ (overview + per-area pages with architecture diagrams, summaries,
-  and links to sources). Use when onboarding a repo, when the structure or tech
-  stack changed, or when wiki pages drift from the current tree.
+  Generate a real DeepWiki for any repository: a navigable Markdown wiki under
+  docs/wiki/ with a home/overview page, an architecture diagram, and one page
+  per major component — each with diagrams, key files linked to source, public
+  interfaces, and dependencies. Use to onboard or document an unfamiliar
+  codebase, or to refresh the wiki after the structure changes.
 ---
 
-# DeepWiki
+# DeepWiki Generator
 
-Standalone skill (under trial — not yet wired into the Harness workflow). It
-generates a DeepWiki-style Markdown wiki: an overview page plus one page per
-**Area**, each with an architecture diagram (Mermaid), a summary, and links to
-the real source paths — mirroring what Devin's hosted DeepWiki produces, but as
-versioned files in the repo.
+Standalone, repo-agnostic skill. It produces a **DeepWiki** for the current
+repository — the same shape Devin's hosted DeepWiki gives you (architecture
+diagrams, summaries, links to sources, navigable pages) but committed as
+Markdown under `docs/wiki/`. No dependency on any project-specific files.
 
-DeepWiki is a _consumer_ of `docs/KNOWLEDGE_INDEX.md` (the Orient map) and the
-source-of-truth Hierarchy: read them as a frame, then expand each Area into its
-own page. Do **not** duplicate the index or glossary — link to them. On
-conflict, the source in the Hierarchy wins.
+A real DeepWiki is **derived from the code, not guessed**. Every claim, file
+link, and diagram must reflect what is actually in the tree at generation time.
+Prefer linking source over paraphrasing it.
 
-## Input (read before running)
+## 0. Steering (optional)
 
-- `docs/KNOWLEDGE_INDEX.md` — Purpose, Top-Level Structure, Key Technologies,
-  Key Concepts (the page frame + Area list). If it is stale, refresh it first.
-- `docs/ARCHITECTURE.md`, `docs/GLOSSARY.md`, `README.md` — for summaries,
-  diagrams, and terms (link the glossary, don't copy it).
-- The real tree: `git ls-files` (source of truth for file lists + links).
-- `.devin/wiki.json` if present: honor `pages` (create exactly those, with
-  `title`/`purpose`/`parent`) and `repo_notes` (priority/emphasis).
+If `.devin/wiki.json` exists at the repo root, honor it (this is Devin's native
+wiki-steering format):
 
-## Steps
+- `pages` — if present, create **exactly** these pages (each has `title`,
+  `purpose`, optional `parent` for hierarchy). Skip auto page-planning.
+- `repo_notes` — free-form guidance on priorities / emphasis. Always respect.
 
-1. **Orient — fix the page list.** If `.devin/wiki.json` has `pages`, create
-   exactly those. Otherwise cluster the `KNOWLEDGE_INDEX.md` Top-Level Structure
-   into Areas (one page each). Every page must map to a real path.
-2. **Author `docs/wiki/README.md`:** (a) Purpose, 1–3 sentences matching the
-   index; (b) a `mermaid` architecture diagram of how the Areas relate; (c) a
-   "Pages" table linking every child page; (d) a "Sources" list linking the
-   top-level directories.
-3. **Author each `docs/wiki/<area>.md`:** summary (the Area's purpose); "Key
-   files" listing + linking real source paths; flow/interactions (Mermaid when
-   useful); "Related concepts" linking `docs/GLOSSARY.md`; a "Sources" footer of
-   repo-relative links; and a `[← Wiki](./README.md)` back-link.
-4. **Cross-link:** the index links to every page; every page links back to the
-   index; reference `KNOWLEDGE_INDEX.md` / `GLOSSARY.md` instead of copying.
-5. **Format** (repo uses Prettier `proseWrap: always`):
+If there is no `.devin/wiki.json`, plan the pages yourself in step 2.
 
-   ```bash
-   npx prettier --write "docs/wiki/**/*.md"
-   ```
+## 1. Discover (build a mental model of the repo)
+
+Gather facts mechanically before writing anything:
+
+- **Inventory:** `git ls-files` for the real tree. Identify top-level
+  directories and group source files by language/extension.
+- **Stack & tooling:** detect manifests and derive the tech stack + commands —
+  e.g. `package.json` (scripts), `pyproject.toml`/`requirements.txt`,
+  `Cargo.toml`, `go.mod`, `pom.xml`/`build.gradle`, `Gemfile`, `composer.json`,
+  `Dockerfile`, `docker-compose.yml`, CI under `.github/workflows/`.
+- **Entry points:** `main`/`index`/`cmd/`/`app`/`server` files, CLI definitions,
+  HTTP route registrations, exported package roots.
+- **Components:** the cohesive subsystems — usually top-level packages/modules
+  (e.g. `frontend/`, `backend/`, `api/`, `core/`, `services/<x>`, a crate, a Go
+  package). One wiki page per major component.
+- **Relationships & data:** how components call/import each other; key data
+  models/schemas/migrations; external integrations (DBs, queues, 3rd-party
+  APIs).
+- **Read the README** and any existing `docs/` to anchor the project's purpose —
+  but verify against the code; code wins on conflict.
+
+## 2. Plan pages
+
+- Home page: `docs/wiki/README.md`.
+- One page per major component from step 1 (or exactly the `.devin/wiki.json`
+  `pages`). Use clear filenames, e.g. `docs/wiki/backend.md`,
+  `docs/wiki/frontend.md`, `docs/wiki/data-model.md`. Keep the set focused —
+  merge trivial dirs, split only genuinely large subsystems.
+
+## 3. Author the home page (`docs/wiki/README.md`)
+
+- **Overview** — 2–4 sentences: what the project does and who/what it's for.
+- **Architecture diagram** — a `mermaid` `flowchart` (or `graph`) showing the
+  major components and how they connect (requests, data, deploy boundaries).
+- **Tech stack** — languages, frameworks, datastores, key libs (from step 1).
+- **Getting started** — the detected install / build / run / test commands.
+- **Pages** — a table linking every component page with a one-line purpose.
+- **Repository map** — top-level directories with one-line descriptions, each
+  linked to the directory.
+
+## 4. Author each component page (`docs/wiki/<component>.md`)
+
+Every component page includes:
+
+- **Summary** — the component's responsibility and boundaries.
+- **Key files** — the most important files/modules, each a link to the real path
+  (optionally `path#Lstart-Lend` for a specific symbol).
+- **Internals** — a `mermaid` diagram when it clarifies: `flowchart` for module
+  structure, `sequenceDiagram` for an important request/operation flow, or
+  `erDiagram`/`classDiagram` for data models.
+- **Public interface** — exported functions/types, HTTP/RPC endpoints, CLI
+  commands, or config the rest of the system depends on.
+- **Dependencies** — what it depends on (in) and what depends on it (out),
+  linking sibling wiki pages.
+- **Footer** — a `[← Home](./README.md)` back-link.
+
+## 5. Cross-link & format
+
+- Home links to every page; every page links back to Home; components link to
+  the sibling pages they reference. Use relative `./*.md` links.
+- If the repo has a Markdown formatter (e.g. Prettier config present), run it on
+  `docs/wiki/`. Otherwise skip formatting — do **not** add tooling the repo
+  doesn't already use.
 
 ## Verify (mechanical gate — each must pass)
 
-```bash
+````bash
+# home exists
 test -f docs/wiki/README.md
-npx prettier --check "docs/wiki/**/*.md"
-! grep -rIn -e 'TODO' -e '<area>' -e 'TBD' docs/wiki
-# no broken intra-wiki .md links:
+
+# at least one architecture diagram was produced
+grep -rIlq '```mermaid' docs/wiki
+
+# no placeholders left behind
+! grep -rIn -e 'TODO' -e 'TBD' -e '<component>' -e 'FIXME' docs/wiki
+
+# every planned page is reachable from Home (no orphans)
+for f in docs/wiki/*.md; do
+  b=$(basename "$f"); [ "$b" = "README.md" ] && continue
+  grep -q "($b\|/$b\|./$b)" docs/wiki/README.md || { echo "ORPHAN $b"; exit 1; }
+done
+
+# no broken intra-wiki .md links
 ! grep -rhoE '\]\(([^):#]+\.md)' docs/wiki | sed -E 's/^\]\(//' \
   | while read -r l; do [ -e "docs/wiki/$l" ] || echo "BROKEN $l"; done | grep .
-```
+````
 
 ## Done when
 
-`docs/wiki/README.md` plus every Area page exist, the index links to all pages
-and every page links back, no placeholders or broken intra-wiki `.md` links
-remain, and Prettier is clean.
-
-<!--
-Status: standalone/trial. Once validated, promote into the Harness workflow by
-moving the canonical procedure to `_harness/skills/generate-deepwiki.md`, adding
-a row to the `_harness/04-SKILLS.md` registry, and wiring an on-demand step into
-`_harness/01-WORKFLOW.md` (GĐ2/GĐ6) — mirroring `generate-knowledge-index`.
--->
+`docs/wiki/README.md` plus every planned component page exist; the home page has
+an architecture diagram and links to every page; every page links back; there
+are no placeholders, orphan pages, or broken intra-wiki links; and the facts,
+file links, and diagrams reflect the current tree.
